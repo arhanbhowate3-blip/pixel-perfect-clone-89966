@@ -8,6 +8,7 @@ const navItems = [
   { label: "Habit Streak Calendar", path: "/streak" },
   { label: "Health Insights Summary", path: "/insights" },
   { label: "Medication Details", path: "/medication" },
+  { label: "Consistency Report", path: "/report" },
 ];
 
 export default function AppHeader() {

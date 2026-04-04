@@ -9,6 +9,7 @@ import HabitStreakCalendar from "./pages/HabitStreakCalendar";
 import HealthInsights from "./pages/HealthInsights";
 import MedicationDetails from "./pages/MedicationDetails";
 import ProfileSettings from "./pages/ProfileSettings";
+import ConsistencyReport from "./pages/ConsistencyReport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/insights" element={<HealthInsights />} />
           <Route path="/medication" element={<MedicationDetails />} />
           <Route path="/settings" element={<ProfileSettings />} />
+          <Route path="/report" element={<ConsistencyReport />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
