@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  const pat = Deno.env.get('AIRTABLE_PAT')
+  const pat = Deno.env.get('AIRTABLE_PAT')?.trim()
   if (!pat) {
     return new Response(JSON.stringify({ error: 'AIRTABLE_PAT not configured' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -37,9 +37,9 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         records: [{
           fields: {
-            Name: name,
-            Dosage: dosage,
-            TimeBlock: timeBlock || 'Morning',
+            Name: String(name).trim(),
+            Dosage: String(dosage).trim(),
+            TimeBlock: String(timeBlock || 'Morning').trim(),
           },
         }],
       }),
@@ -49,6 +49,18 @@ Deno.serve(async (req) => {
 
     if (!res.ok) {
       console.error('Airtable error:', JSON.stringify(data))
+
+      if (res.status === 401) {
+        return new Response(JSON.stringify({
+          error: 'Airtable authentication failed',
+          message: 'Airtable rejected AIRTABLE_PAT. Make sure the token has data.records:write scope and access to base apphbarjTeh5hPNVD.',
+          details: data,
+        }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
       return new Response(JSON.stringify({ error: 'Airtable API error', details: data }), {
         status: res.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
