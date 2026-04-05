@@ -36,7 +36,7 @@ export default function AddMedicineDialog({ open, onOpenChange, onSaved }: AddMe
     setTimeBlock("Morning"); setInstructions(""); setPrescribedBy("");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name.trim()) {
       toast({ title: "Name is required", variant: "destructive" });
       return;
@@ -61,15 +61,30 @@ export default function AddMedicineDialog({ open, onOpenChange, onSaved }: AddMe
 
     saveMedication(med);
 
-    // Sync to Airtable via edge function
-    supabase.functions.invoke('airtable-sync', {
-      body: { name: med.name, dosage: med.dosage, timeBlock: med.timeBlock },
-    }).then(({ error }) => {
-      if (error) console.error('Airtable sync failed:', error);
-      else console.log('Synced to Airtable');
-    });
+    try {
+      const { error } = await supabase.functions.invoke("airtable-sync", {
+        body: { name: med.name, dosage: med.dosage, timeBlock: med.timeBlock },
+      });
 
-    toast({ title: `${med.name} saved ✓`, description: `Added to ${timeBlock} block.` });
+      if (error) {
+        console.error("Airtable sync failed:", error);
+        toast({
+          title: `${med.name} saved locally`,
+          description: "Airtable sync failed. Check your Airtable token scope and base access.",
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: `${med.name} saved ✓`, description: `Added to ${timeBlock} block and synced to Airtable.` });
+      }
+    } catch (error) {
+      console.error("Airtable sync request failed:", error);
+      toast({
+        title: `${med.name} saved locally`,
+        description: "Airtable sync request failed.",
+        variant: "destructive",
+      });
+    }
+
     resetForm();
     onOpenChange(false);
     onSaved();
