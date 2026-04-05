@@ -1,3 +1,3 @@
  
- # 🌐 [Click Here to Launch Well-Track Daily Live Demo](https://well-track-daily.zenicgamingoffi.replit.dev/)
+ # 🌐 [Click Here to Launch Well-Track Daily Live Demo](https://pixel-perfect-clone--zenicgamingoffi.replit.app/)
  
