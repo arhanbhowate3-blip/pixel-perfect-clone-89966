@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -59,6 +60,15 @@ export default function AddMedicineDialog({ open, onOpenChange, onSaved }: AddMe
     };
 
     saveMedication(med);
+
+    // Sync to Airtable via edge function
+    supabase.functions.invoke('airtable-sync', {
+      body: { name: med.name, dosage: med.dosage, timeBlock: med.timeBlock },
+    }).then(({ error }) => {
+      if (error) console.error('Airtable sync failed:', error);
+      else console.log('Synced to Airtable');
+    });
+
     toast({ title: `${med.name} saved ✓`, description: `Added to ${timeBlock} block.` });
     resetForm();
     onOpenChange(false);
