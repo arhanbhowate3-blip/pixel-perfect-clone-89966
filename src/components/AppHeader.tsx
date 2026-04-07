@@ -14,6 +14,8 @@ const navItems = [
 export default function AppHeader() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState<string>('Apr 8, 2026');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   return (
     <header className="border-b border-border bg-card">
@@ -40,9 +42,27 @@ export default function AppHeader() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground hidden sm:block">
-            Today • Apr 12, 2026
-          </span>
+          <div className="text-sm text-muted-foreground hidden sm:flex items-center gap-1">
+  <span>Today •</span>
+  {isEditing ? (
+    <input
+      type="text"
+      value={currentDate}
+      onChange={(e) => setCurrentDate(e.target.value)}
+      onBlur={() => setIsEditing(false)}
+      onKeyDown={(e) => e.key === 'Enter' && setIsEditing(false)}
+      className="border rounded px-1 w-28 bg-background text-foreground outline-none ring-1 ring-primary"
+      autoFocus
+    />
+  ) : (
+    <span 
+      onClick={() => setIsEditing(true)} 
+      className="font-medium cursor-pointer hover:text-primary transition-colors hover:underline"
+    >
+      {currentDate}
+    </span>
+  )}
+</div>
           <Bell className="w-5 h-5 text-muted-foreground" />
           <Avatar className="w-8 h-8">
             <AvatarImage src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=face" />
